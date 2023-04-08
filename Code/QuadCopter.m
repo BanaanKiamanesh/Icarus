@@ -30,6 +30,9 @@ classdef QuadCopter < handle
         % Input Control Signals
         T
         Tau
+
+        % IMU Noise Variance
+        NoiseVar
     end
 
     % Controllers
@@ -62,13 +65,17 @@ classdef QuadCopter < handle
             obj.InvI = inv(obj.I);
 
             % Controller Gains and Params
-            obj.LinCtrl.Kp = Controller.Linear.Kp(:);          % Linear Motion Controller
-            obj.LinCtrl.Ki = Controller.Linear.Ki(:);
-            obj.LinCtrl.Kd = Controller.Linear.Kd(:);
+            obj.LinCtrl.Kp  = Controller.Linear.Kp(:);          % Linear Motion Controller
+            obj.LinCtrl.Ki  = Controller.Linear.Ki(:);
+            obj.LinCtrl.Kd  = Controller.Linear.Kd(:);
+            obj.LinCtrl.Tau = Controller.Linear.Tau(:);
+            obj.LinCtrl.Sat  = Controller.Linear.Sat(:);
 
-            obj.AngCtrl.Kp = Controller.Angular.Kp(:);          % Angular Motion Controller
-            obj.AngCtrl.Ki = Controller.Angular.Ki(:);
-            obj.AngCtrl.Kd = Controller.Angular.Kd(:);
+            obj.AngCtrl.Kp  = Controller.Angular.Kp(:);          % Angular Motion Controller
+            obj.AngCtrl.Ki  = Controller.Angular.Ki(:);
+            obj.AngCtrl.Kd  = Controller.Angular.Kd(:);
+            obj.AngCtrl.Tau = Controller.Angular.Tau(:);
+            obj.AngCtrl.Sat  = Controller.Angular.Sat(:);
 
             % Initial Conditions
             obj.Pos = InitCond.Position(:);
@@ -84,6 +91,9 @@ classdef QuadCopter < handle
             obj.T = obj.Mass * obj.g;
             % obj.T = 0;
             obj.Tau = [0; 0; 0];
+            
+            
+            obj.NoiseVar = 0.01;
 
             % Initialize Controller
             obj.ControllerInit();
@@ -143,8 +153,8 @@ classdef QuadCopter < handle
         end
 
 
-        function Val = WrapAngles(Angle)
-            Val = rem(Angle - pi, 2*pi) + pi;
+        function Val = WrapAngle(obj, Angle)
+            Val = rem(Angle - pi, 2*pi) + pi + rand * obj.NoiseVar;
         end
     end
 
@@ -154,13 +164,14 @@ classdef QuadCopter < handle
         function ControllerInit(obj)
 
             % Initialize Angular Controllers
-            obj.PhiPID   = PID(obj.AngCtrl.Kp(1), obj.AngCtrl.Ki(1), obj.AngCtrl.Kd(1), obj.dt);
-            obj.ThetaPID = PID(obj.AngCtrl.Kp(2), obj.AngCtrl.Ki(2), obj.AngCtrl.Kd(2), obj.dt);
-            obj.PsiPID   = PID(obj.AngCtrl.Kp(3), obj.AngCtrl.Ki(3), obj.AngCtrl.Kd(3), obj.dt);
+            obj.PhiPID   = PID(obj.AngCtrl.Kp(1), obj.AngCtrl.Ki(1), obj.AngCtrl.Kd(1), obj.AngCtrl.Tau(1), obj.dt, obj.AngCtrl.Sat(1));
+            obj.ThetaPID = PID(obj.AngCtrl.Kp(2), obj.AngCtrl.Ki(2), obj.AngCtrl.Kd(2), obj.AngCtrl.Tau(2), obj.dt, obj.AngCtrl.Sat(2));
+            obj.PsiPID   = PID(obj.AngCtrl.Kp(3), obj.AngCtrl.Ki(3), obj.AngCtrl.Kd(3), obj.AngCtrl.Tau(3), obj.dt, obj.AngCtrl.Sat(3));
 
             % Initialize Linear Controllers
-            obj.ZdotPID = PID(obj.LinCtrl.Kp(3), obj.LinCtrl.Ki(3), obj.LinCtrl.Kd(3), obj.dt);
+            obj.ZdotPID = PID(obj.LinCtrl.Kp(3), obj.LinCtrl.Ki(3), obj.LinCtrl.Kd(3), obj.LinCtrl.Tau(3), obj.dt, obj.LinCtrl.Sat(3));
         end
+
 
         function AttitudeControl(obj)
             refSig = [deg2rad(10)
@@ -173,14 +184,16 @@ classdef QuadCopter < handle
             DesPsi   = refSig(3);
             DesZ     = refSig(4);
 
-            obj.Tau(1)     = obj.PhiPID.Update(DesPhi, obj.Orient(1));
-            obj.Tau(2) = obj.ThetaPID.Update(DesTheta, obj.Orient(2));
-            obj.Tau(3)     = obj.PsiPID.Update(DesPsi, obj.Orient(3));
+            obj.Tau(1)     = obj.PhiPID.Update(DesPhi, obj.WrapAngle(obj.Orient(1)));
+            obj.Tau(2) = obj.ThetaPID.Update(DesTheta, obj.WrapAngle(obj.Orient(2)));
+            obj.Tau(3)     = obj.PsiPID.Update(DesPsi, obj.WrapAngle(obj.Orient(3)));
 
-%             obj.Tau = zeros(3, 1);
+            % obj.Tau = zeros(3, 1);
+
+            disp(['CtrlSig: ', num2str(obj.T), mat2str(obj.Tau)])
 
             obj.T = obj.ZdotPID.Update(DesZ, obj.Vel(3)) + obj.Mass * obj.g;
-%             obj.T = obj.Mass * obj.g;
+            % obj.T = obj.Mass * obj.g;
         end
     end
 end

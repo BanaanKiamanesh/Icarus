@@ -1,6 +1,7 @@
 clear
 close all
 clc
+warning off
 
 format short
 format compact
@@ -26,18 +27,24 @@ InitCond.Omega       = [0, 0, 0];
 
 % Controller Gains and Params
 % X, Y, Z respectively
-Gains.Linear.Kp = [0, 0, 10];
-Gains.Linear.Ki = [0, 0, 0];
-Gains.Linear.Kd = [0, 0, 0];
+Gains.Linear.Kp  = [0, 0, 15];
+Gains.Linear.Ki  = [0, 0, 2];
+Gains.Linear.Kd  = [0, 0, 0];
+Gains.Linear.Tau = [0, 0, 0];
+
+Gains.Linear.Sat  = [Inf, Inf, Inf];
 
 % Phi, Theta, Psi respectively
-Gains.Angular.Kp = [0.1, 0.1, 0.2];
-Gains.Angular.Ki = [0, 0, 0];
-Gains.Angular.Kd = [0.06, 0.11, 0.2];
+Gains.Angular.Kp  = [ 0.1, 0.05,  0.2];
+Gains.Angular.Ki  = [   0,    0,    0];
+Gains.Angular.Kd  = [ 0.1,  0.1,  0.2];
+Gains.Angular.Tau = [0.01, 0.01, 0.01];
+
+Gains.Angular.Sat  = [Inf, Inf, Inf];
 
 % Simulation Properties
 dt = 0.01;
-SimTime = 5;
+SimTime = 10;
 
 %% InitCond a QuadCopter Obj
 Q = QuadCopter(DynPar, Gains,InitCond, dt, SimTime);
@@ -45,6 +52,7 @@ Motion = Q.Simulate();
 
 %% Plot Results
 Plt = MotionPlotter(Motion.t, Motion.Y, DynPar.ArmLength);
-Plt.PlotLinearMotion()
 Plt.PlotAngularMotion()
-Plt.Plot3D();
+Plt.PlotLinearMotion()
+
+% Plt.Plot3D();

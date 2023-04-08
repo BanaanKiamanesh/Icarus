@@ -13,7 +13,7 @@ classdef MotionPlotter < handle
     properties
         LinearMotionPlot
         AngularMotionPlot
-        PlotTraj
+        Viz3D
     end
 
     methods
@@ -32,43 +32,47 @@ classdef MotionPlotter < handle
             obj.LinearMotionPlot = figure('Name', 'Position and Velocity Motion Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.LinearMotionPlot.GraphicsSmoothing = 'on';
+            obj.LinearMotionPlot.Color = [1, 1, 1];
+            obj.LinearMotionPlot = gca;
+            obj.LinearMotionPlot.FontSize = 14;
+            obj.LinearMotionPlot.FontWeight = 'B';
 
             title("Position and Velocity Motion")
 
             subplot(2, 3, 1)
-            plot(obj.t, obj.Pos(:, 1), "LineWidth", 3)
-            xlabel("X (m)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Pos(:, 1), "LineWidth", 2.5)
+            ylabel("X (m)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 2)
-            plot(obj.t, obj.Pos(:, 2), "LineWidth", 3)
-            xlabel("Y (m)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Pos(:, 2), "LineWidth", 2.5)
+            ylabel("Y (m)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 3)
-            plot(obj.t, obj.Pos(:, 3), "LineWidth", 3)
-            xlabel("Z (m)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Pos(:, 3), "LineWidth", 2.5)
+            ylabel("Z (m)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 4)
-            plot(obj.t, obj.Vel(:, 1), "LineWidth", 3)
-            xlabel("dX (m/s)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Vel(:, 1), "LineWidth", 2.5)
+            ylabel("dX (m/s)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 5)
-            plot(obj.t, obj.Vel(:, 2), "LineWidth", 3)
-            xlabel("dY (m/s)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Vel(:, 2), "LineWidth", 2.5)
+            ylabel("dY (m/s)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 6)
-            plot(obj.t, obj.Vel(:, 3), "LineWidth", 3)
-            xlabel("dZ (m/s)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Vel(:, 3), "LineWidth", 2.5)
+            ylabel("dZ (m/s)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
         end
 
@@ -76,59 +80,68 @@ classdef MotionPlotter < handle
             obj.AngularMotionPlot = figure('Name', 'Orientation and Angular Velocity Motion Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.AngularMotionPlot.GraphicsSmoothing = 'on';
+            obj.AngularMotionPlot.Color = [1, 1, 1];
+            obj.AngularMotionPlot = gca;
+            obj.AngularMotionPlot.FontSize = 14;
+            obj.AngularMotionPlot.FontWeight = 'B';
 
             title("Orientation and Angular Velocity Motion")
 
             subplot(2, 3, 1)
-            plot(obj.t, obj.Orient(:, 1), "LineWidth", 3)
-            xlabel("\phi (radians)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Orient(:, 1), "LineWidth", 2.5)
+            ylabel("\phi (radians)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 2)
-            plot(obj.t, obj.Orient(:, 2), "LineWidth", 3)
-            xlabel("\theta (radians)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Orient(:, 2), "LineWidth", 2.5)
+            ylabel("\theta (radians)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 3)
-            plot(obj.t, obj.Orient(:, 3), "LineWidth", 3)
-            xlabel("\psi (radians)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Orient(:, 3), "LineWidth", 2.5)
+            ylabel("\psi (radians)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 4)
-            plot(obj.t, obj.Omega(:, 1), "LineWidth", 3)
-            xlabel("d\phi (radians/s)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Omega(:, 1), "LineWidth", 2.5)
+            ylabel("d\phi (radians/s)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 5)
-            plot(obj.t, obj.Omega(:, 2), "LineWidth", 3)
-            xlabel("d\theta (radians/s)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Omega(:, 2), "LineWidth", 2.5)
+            ylabel("d\theta (radians/s)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
 
             subplot(2, 3, 6)
-            plot(obj.t, obj.Omega(:, 3), "LineWidth", 3)
-            xlabel("d\psi (radians/s)")
-            ylabel("t (s)")
+            plot(obj.t, obj.Omega(:, 3), "LineWidth", 2.5)
+            ylabel("d\psi (radians/s)", 'FontSize', 14 ,'FontWeight', 'Bold')
+            xlabel("t (s)", 'FontSize', 14 ,'FontWeight', 'Bold')
             grid minor
         end
 
         function Plot3D(obj)
 
-            obj.PlotTraj = figure('Name', '3D Trajectory Plot', 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
-            obj.PlotTraj.GraphicsSmoothing = 'on';
-            grid on
+            obj.Viz3D = figure('Name', '3D Trajectory Plot', 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
+            obj.Viz3D.GraphicsSmoothing = 'on';
+            obj.Viz3D.Color = [1, 1, 1];
+            obj.Viz3D = gca;
+            obj.Viz3D.FontSize = 14;
+            obj.Viz3D.FontWeight = 'B';
+            grid minor
             axis equal;
-            xlabel("X")
-            ylabel("Y")
-            zlabel("Z")
+            title("3D Visualization of the Motion", 'FontSize', 14, 'FontWeight', 'Bold')
+            xlabel("X", 'FontSize', 14 ,'FontWeight', 'Bold')
+            ylabel("Y", 'FontSize', 14 ,'FontWeight', 'Bold')
+            zlabel("Z", 'FontSize', 14 ,'FontWeight', 'Bold')
             % axis off
-%             view(z3)
+            view(3)
 %             view(90, 0)
-            view(0, 0)
+%             view(0, 0)
 %             view(0, 90)
 
             % Setting Limits to the Plot
@@ -207,6 +220,7 @@ classdef MotionPlotter < handle
 
                 drawnow %limitrate
 
+                % Crash Detection
                 if    Center(3) < RoomDims.Z(1) || Center(3) > RoomDims.Z(2) ...
                    || Center(2) < RoomDims.Y(1) || Center(2) > RoomDims.Y(2) ...
                    || Center(1) < RoomDims.X(1) || Center(1) > RoomDims.X(2)
