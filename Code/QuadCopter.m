@@ -32,15 +32,20 @@ classdef QuadCopter < handle
         Tau
 
         % IMU Noise Variance
-        NoiseVar
+        IMUNoiseVar
     end
 
     % Controllers
     properties
+        % Angular Controller
         PhiPID
         ThetaPID
         PsiPID
-        ZdotPID
+
+        % Linear Controller
+        XPID
+        YPID
+        ZPID
     end
 
     properties (Constant = true)
@@ -93,7 +98,7 @@ classdef QuadCopter < handle
             obj.Tau = [0; 0; 0];
             
             
-            obj.NoiseVar = 0.0;
+            obj.IMUNoiseVar = 0.0;
 
             % Initialize Controller
             obj.ControllerInit();
@@ -177,7 +182,7 @@ classdef QuadCopter < handle
 
 
         function Val = WrapAngle(obj, Angle)
-            Val = rem(Angle - pi, 2*pi) + pi + rand * obj.NoiseVar;
+            Val = rem(Angle - pi, 2*pi) + pi + rand * obj.IMUNoiseVar;
         end
     end
 
@@ -192,30 +197,49 @@ classdef QuadCopter < handle
             obj.PsiPID   = PID(obj.AngCtrl.Kp(3), obj.AngCtrl.Ki(3), obj.AngCtrl.Kd(3), obj.AngCtrl.Tau(3), obj.dt, obj.AngCtrl.Sat(3));
 
             % Initialize Linear Controllers
-            obj.ZdotPID = PID(obj.LinCtrl.Kp(3), obj.LinCtrl.Ki(3), obj.LinCtrl.Kd(3), obj.LinCtrl.Tau(3), obj.dt, obj.LinCtrl.Sat(3));
+            obj.XPID = PID(obj.LinCtrl.Kp(1), obj.LinCtrl.Ki(1), obj.LinCtrl.Kd(1), obj.LinCtrl.Tau(1), obj.dt, obj.LinCtrl.Sat(1));
+            obj.YPID = PID(obj.LinCtrl.Kp(2), obj.LinCtrl.Ki(2), obj.LinCtrl.Kd(2), obj.LinCtrl.Tau(2), obj.dt, obj.LinCtrl.Sat(2));
+            obj.ZPID = PID(obj.LinCtrl.Kp(3), obj.LinCtrl.Ki(3), obj.LinCtrl.Kd(3), obj.LinCtrl.Tau(3), obj.dt, obj.LinCtrl.Sat(3));
         end
 
 
         function AttitudeControl(obj)
-            refSig = [deg2rad(10)
-                      deg2rad(10)
-                      deg2rad(10)
-                      0];
 
-            DesPhi   = refSig(1);
-            DesTheta = refSig(2);
-            DesPsi   = refSig(3);
-            DesZ     = refSig(4);
+            % Reference Signal Structure:
+            %       RefSig(1) ==> X
+            %       RefSig(2) ==> Y
+            %       RefSig(3) ==> Z
+            %       RefSig(4) ==> Psi
 
-            obj.Tau(1)     = obj.PhiPID.Update(DesPhi, obj.WrapAngle(obj.Orient(1)));
+            refSig = [1
+                      1
+                      2.5
+                      pi];
+
+            DesX   = refSig(1);
+            DesY   = refSig(2);
+            DesZ   = refSig(3);
+            DesPsi = refSig(4);
+
+            % Calculate Desired Phi and Theta SetPoints
+            XPIDVal = obj.XPID.Update(DesX, obj.Pos(1));
+            YPIDVal = obj.YPID.Update(DesY, obj.Pos(2));
+
+            Psi = obj.Orient(3);
+            Des = obj.Mass / obj.T * [sin(Psi) -cos(Psi); cos(Psi) sin(Psi)] * [XPIDVal; YPIDVal];
+
+            DesPhi   = Des(1);
+            DesTheta = Des(2);
+
+            obj.Tau(1) = obj.PhiPID.Update(DesPhi, obj.WrapAngle(obj.Orient(1)));
             obj.Tau(2) = obj.ThetaPID.Update(DesTheta, obj.WrapAngle(obj.Orient(2)));
-            obj.Tau(3)     = obj.PsiPID.Update(DesPsi, obj.WrapAngle(obj.Orient(3)));
+            obj.Tau(3) = obj.PsiPID.Update(DesPsi, obj.WrapAngle(obj.Orient(3)));
 
             % obj.Tau = zeros(3, 1);
 
 %             disp(['CtrlSig: ', num2str(obj.T), mat2str(obj.Tau)])
 
-            obj.T = obj.ZdotPID.Update(DesZ, obj.Vel(3)) + obj.Mass * obj.g;
+            obj.T = obj.ZPID.Update(DesZ, obj.Pos(3)) + obj.Mass * obj.g;
             % obj.T = obj.Mass * obj.g;
         end
     end
