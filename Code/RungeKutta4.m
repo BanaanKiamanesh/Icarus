@@ -1,4 +1,4 @@
-function [t, Y] = RungeKutta4(odeFun, tSpan, dt, Y0)
+function [t, Y, CtrlSig] = RungeKutta4(odeFun, tSpan, dt, Y0)
 
     % This Function is the Implementation of the 4th-Order Runge-Kutta Method
     % for the Numeric Solve of Differetial Equations...
@@ -13,7 +13,7 @@ function [t, Y] = RungeKutta4(odeFun, tSpan, dt, Y0)
     %     Y ==> ODE Numerical Solution
 
 
-    StepNum = floor((max(tSpan) - min(tSpan)) / dt) + 1;     % Number of Simulation Steps
+    StepNum  = floor((max(tSpan) - min(tSpan)) / dt) + 1;    % Number of Simulation Steps
     StateNum = numel(Y0);                                    % Number of Sys States
 
     % Initialize Solution and Time Vars
@@ -25,7 +25,15 @@ function [t, Y] = RungeKutta4(odeFun, tSpan, dt, Y0)
     % Main Loop
     for k = 1:StepNum-1
 
-        K1 = dt * feval(odeFun, t(k)        , Y(:, k));
+        [K1, Tmp] = feval(odeFun, t(k), Y(:, k));
+        K1 = dt * K1;
+
+        if exist('CtrlSig', 'var') == 0
+            CtrlSig = zeros(numel(Tmp), StepNum);
+        else
+            CtrlSig(:, k+1) = Tmp;
+        end
+
         K2 = dt * feval(odeFun, t(k) + dt/2 , Y(:, k) + K1 / 2);
         K3 = dt * feval(odeFun, t(k) + dt/2 , Y(:, k) + K2 / 2);
         K4 = dt * feval(odeFun, t(k) + dt   , Y(:, k) + K3);
