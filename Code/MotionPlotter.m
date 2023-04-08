@@ -19,6 +19,7 @@ classdef MotionPlotter < handle
         LinearMotionPlot
         AngularMotionPlot
         Viz3D
+        Viz3DAxis
     end
 
     methods
@@ -36,14 +37,19 @@ classdef MotionPlotter < handle
             obj.ArmLen = ArmLength;
         end
 
-        function PlotControlSignals(obj)
+        
+        function PlotControlSignals(obj, Save)
+
+            if nargin == 1
+                Save = false;
+            end
+
             obj.CtrlSigPlot = figure('Name', 'Control Signals Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.CtrlSigPlot.GraphicsSmoothing = 'on';
             obj.CtrlSigPlot.Color = [1, 1, 1];
-            obj.CtrlSigPlot = gca;
-            obj.CtrlSigPlot.FontSize = 10;
-            obj.CtrlSigPlot.FontWeight = 'B';
+
+            sgtitle("Control Signals", 'FontSize', 24,'FontWeight', 'Bold')
 
             subplot(4, 1, 1)
             plot(obj.t, obj.CtrlSig(1, :), "LineWidth", 2.5)
@@ -72,17 +78,36 @@ classdef MotionPlotter < handle
             xlabel("t (s)", 'FontSize', 10,'FontWeight', 'Bold')
             grid minor
             title("Moment Along Z Axis", 'FontSize', 14,'FontWeight', 'Bold')
+
+            if Save
+
+                mkdir Plots
+                
+                try 
+                    rmdir Plots\CtrlSignals
+                catch
+                end
+
+                mkdir Plots\CtrlSignals
+                exportgraphics(obj.CtrlSigPlot, 'Plots/CtrlSignals/ControlSignals.jpg');
+                exportgraphics(obj.CtrlSigPlot, 'Plots/CtrlSignals/ControlSignals.pdf');
+
+            end
         end
 
 
-        function PlotThrusts(obj)
+        function PlotThrusts(obj, Save)
+
+            if nargin == 1
+                Save = false;
+            end
+
             obj.ThrustPlot = figure('Name', 'Motor Thrusts Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.ThrustPlot.GraphicsSmoothing = 'on';
             obj.ThrustPlot.Color = [1, 1, 1];
-            obj.ThrustPlot = gca;
-            obj.ThrustPlot.FontSize = 10;
-            obj.ThrustPlot.FontWeight = 'B';
+
+            sgtitle("Thrust Signals", 'FontSize', 24,'FontWeight', 'Bold')
 
             subplot(4, 1, 1)
             plot(obj.t, obj.Thrusts(1, :), "LineWidth", 2.5)
@@ -111,19 +136,35 @@ classdef MotionPlotter < handle
             xlabel("t (s)", 'FontSize', 10,'FontWeight', 'Bold')
             grid minor
             title("Motor 4", 'FontSize', 14,'FontWeight', 'Bold')
+
+            if Save
+                mkdir Plots
+                
+                try 
+                    rmdir Plots\ThrustSignals
+                catch
+                end
+
+                mkdir Plots\ThrustSignals
+                exportgraphics(obj.ThrustPlot, 'Plots/ThrustSignals/ThrustSignalsSignals.jpg');
+                exportgraphics(obj.ThrustPlot, 'Plots/ThrustSignals/ThrustSignalsSignals.pdf');
+
+            end
         end
 
 
-        function PlotLinearMotion(obj)
+        function PlotLinearMotion(obj, Save)
+
+            if nargin == 1
+                Save = false;
+            end
+
             obj.LinearMotionPlot = figure('Name', 'Position and Velocity Motion Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.LinearMotionPlot.GraphicsSmoothing = 'on';
             obj.LinearMotionPlot.Color = [1, 1, 1];
-            obj.LinearMotionPlot = gca;
-            obj.LinearMotionPlot.FontSize = 10;
-            obj.LinearMotionPlot.FontWeight = 'B';
 
-            title("Position and Velocity Motion")
+            sgtitle("Linear Motion", 'FontSize', 24,'FontWeight', 'Bold')
 
             subplot(2, 3, 1)
             plot(obj.t, obj.Pos(:, 1), "LineWidth", 2.5)
@@ -166,17 +207,35 @@ classdef MotionPlotter < handle
             xlabel("t (s)", 'FontSize', 10,'FontWeight', 'Bold')
             grid minor
             title("Velocity Along Z", 'FontSize', 14,'FontWeight', 'Bold')
+
+            if Save
+                mkdir Plots
+                
+                try 
+                    rmdir Plots\LinearMotion
+                catch
+                end
+
+                mkdir Plots\LinearMotion
+                exportgraphics(obj.LinearMotionPlot, 'Plots/LinearMotion/LinearMotion.jpg');
+                exportgraphics(obj.LinearMotionPlot, 'Plots/LinearMotion/LinearMotion.pdf');
+
+            end
         end
 
 
-        function PlotAngularMotion(obj)
+        function PlotAngularMotion(obj, Save)
+
+            if nargin == 1
+                Save = false;
+            end
+
             obj.AngularMotionPlot = figure('Name', 'Orientation and Angular Velocity Motion Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.AngularMotionPlot.GraphicsSmoothing = 'on';
             obj.AngularMotionPlot.Color = [1, 1, 1];
-            obj.AngularMotionPlot = gca;
-            obj.AngularMotionPlot.FontSize = 10;
-            obj.AngularMotionPlot.FontWeight = 'B';
+
+            sgtitle("Angular Motion", 'FontSize', 24,'FontWeight', 'Bold')
 
             subplot(2, 3, 1)
             plot(obj.t, obj.Orient(:, 1), "LineWidth", 2.5)
@@ -219,17 +278,35 @@ classdef MotionPlotter < handle
             xlabel("t (s)", 'FontSize', 10,'FontWeight', 'Bold')
             grid minor
             title("Angular Velocity Along Z", 'FontSize', 14,'FontWeight', 'Bold')
+
+            if Save
+                mkdir Plots
+                
+                try 
+                    rmdir Plots\AngularMotion
+                catch
+                end
+
+                mkdir Plots\AngularMotion
+                exportgraphics(obj.AngularMotionPlot, 'Plots/AngularMotion/AngularMotion.jpg');
+                exportgraphics(obj.AngularMotionPlot, 'Plots/AngularMotion/AngularMotion.pdf');
+
+            end
         end
 
 
-        function Plot3D(obj)
+        function Plot3D(obj, Save)
+
+            if nargin == 1
+                Save = false;
+            end
 
             obj.Viz3D = figure('Name', '3D Trajectory Plot', 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.Viz3D.GraphicsSmoothing = 'on';
             obj.Viz3D.Color = [1, 1, 1];
-            obj.Viz3D = gca;
-            obj.Viz3D.FontSize = 10;
-            obj.Viz3D.FontWeight = 'B';
+
+            obj.Viz3DAxis = gca;
+
             grid minor
             axis equal;
             title("3D Visualization of the Motion", 'FontSize', 16, 'FontWeight', 'Bold')
@@ -238,9 +315,9 @@ classdef MotionPlotter < handle
             zlabel("Z", 'FontSize', 14,'FontWeight', 'Bold')
             % axis off
             view(3)
-            %             view(90, 0)
-            %             view(0, 0)
-            %             view(0, 90)
+            % view(90, 0)
+            % view(0, 0)
+%             view(0, 90)
 
             % Setting Limits to the Plot
             RoomDims.X = [-5, 5];
@@ -282,12 +359,20 @@ classdef MotionPlotter < handle
 
             hold(gca, 'off');
 
+            if Save
+                myVideo = VideoWriter('myVideoFile.mp4', 'MPEG-4');
+                myVideo.FrameRate = 60;
+                open(myVideo)
+            end
+
             % Main Simulation Loop
             for i = 1:length(obj.Pos)
 
+                subtitle(['Simulation Time: ', num2str(round(obj.t(i), 1))],'FontWeight', 'Bold')
+
                 % Extract Current Orientation and Position
                 Orientation = obj.Orient(i, 1:3);
-                Center = obj.Pos(i, 1:3);
+                Center      = obj.Pos(i, 1:3);
 
                 % Create a Temp Mat to Hold Rotated MotorCoords
                 tmp = zeros(size(MotorCoord));
@@ -316,7 +401,12 @@ classdef MotionPlotter < handle
                     'YData', Center(2), ...
                     'ZData', 0);
 
-                drawnow expose %limitrate
+                drawnow expose update
+
+                if Save
+                    frame = getframe(obj.Viz3D); %get frame
+                    writeVideo(myVideo, frame);
+                end
 
                 % Crash Detection
                 if    Center(3) < RoomDims.Z(1) || Center(3) > RoomDims.Z(2) ...
@@ -326,7 +416,10 @@ classdef MotionPlotter < handle
                     %                     msgbox("Crashed..!", 'Error', 'error');
                     break;
                 end
+            end
 
+            if Save
+                close(myVideo)
             end
         end
     end
