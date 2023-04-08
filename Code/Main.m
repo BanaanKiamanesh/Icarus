@@ -32,7 +32,7 @@ Gains.Linear.Ki  = [0, 0, 2];
 Gains.Linear.Kd  = [0, 0, 0];
 Gains.Linear.Tau = [0, 0, 0];
 
-Gains.Linear.Sat  = [Inf, Inf, Inf];
+Gains.Linear.Sat  = [Inf, Inf, 3];
 
 % Phi, Theta, Psi respectively
 Gains.Angular.Kp  = [ 0.1, 0.05,  0.2];
@@ -48,11 +48,13 @@ SimTime = 10;
 
 %% InitCond a QuadCopter Obj
 Q = QuadCopter(DynPar, Gains,InitCond, dt, SimTime);
-Motion = Q.Simulate();
+[Motion, InSig] = Q.Simulate();
 
 %% Plot Results
-Plt = MotionPlotter(Motion.t, Motion.Y, DynPar.ArmLength);
+Plt = MotionPlotter(Motion.t, Motion.Y, InSig.CtrlSig, InSig.Thrusts, DynPar.ArmLength);
 Plt.PlotAngularMotion()
 Plt.PlotLinearMotion()
+Plt.PlotThrusts()
+Plt.PlotControlSignals()
 
-% Plt.Plot3D();
+Plt.Plot3D();

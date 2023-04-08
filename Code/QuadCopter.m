@@ -93,18 +93,20 @@ classdef QuadCopter < handle
             obj.Tau = [0; 0; 0];
             
             
-            obj.NoiseVar = 0.01;
+            obj.NoiseVar = 0.0;
 
             % Initialize Controller
             obj.ControllerInit();
 
         end
 
-        function Xdot = ODE(obj, t, State)
+        function [Xdot, U] = ODE(obj, t, State)
 
             obj.CurrentTime = t;
 
             obj.AttitudeControl();
+            U = [obj.T
+                obj.Tau];
 
             obj.Pos = State(1:3);
             obj.Vel = State(4:6);
@@ -139,7 +141,7 @@ classdef QuadCopter < handle
 
         end
 
-        function Motion = Simulate(obj)
+        function [Motion, InSig] = Simulate(obj)
             odeFun = @(t, y) obj.ODE(t, y);
             tSpan = [0, obj.SimTime];
 
@@ -149,7 +151,28 @@ classdef QuadCopter < handle
                   obj.Omega];
 
             % Solve ODE for Given Params
-            [Motion.t, Motion.Y] = RungeKutta4(odeFun, tSpan, obj.dt, Y0);
+            [Motion.t, Motion.Y, InSig.CtrlSig] = RungeKutta4(odeFun, tSpan, obj.dt, Y0);
+
+            % Remove Some Elements from Beginning and the end, Due to
+            % Imperfect ODE Solve...
+            Motion.t = Motion.t(5:end - 5);
+            Motion.Y = Motion.Y(5:end - 5, :);
+            InSig.CtrlSig = InSig.CtrlSig(:, 5:end - 5);
+
+
+            % Extract Motor Thrust Signals from Control Signals
+            %   Total Thrust = T1 + T2 + T3 + T4
+            %        MomentX = ArmLength * T2 - ArmLength * T4 
+            %        MomentY = ArmLength * T1 - ArmLength * T3
+            %        MomentZ = Thrust2Drag * T1 - Thrust2Drag * T2
+            %                + Thrust2Drag * T3 - Thrust2Drag * T4
+
+            TM = [             1,                1,               1,                1
+                               0,    obj.ArmLength,               0,   -obj.ArmLength
+                   obj.ArmLength,                0,  -obj.ArmLength,                0
+                 obj.Thrust2Drag, -obj.Thrust2Drag, obj.Thrust2Drag, -obj.Thrust2Drag];
+
+            InSig.Thrusts = TM \ InSig.CtrlSig;
         end
 
 
@@ -190,7 +213,7 @@ classdef QuadCopter < handle
 
             % obj.Tau = zeros(3, 1);
 
-            disp(['CtrlSig: ', num2str(obj.T), mat2str(obj.Tau)])
+%             disp(['CtrlSig: ', num2str(obj.T), mat2str(obj.Tau)])
 
             obj.T = obj.ZdotPID.Update(DesZ, obj.Vel(3)) + obj.Mass * obj.g;
             % obj.T = obj.Mass * obj.g;
