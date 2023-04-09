@@ -33,6 +33,9 @@ classdef QuadCopter < handle
 
         % IMU Noise Variance
         IMUNoiseVar
+
+        % Trajectory
+        Traj
     end
 
     % Controllers
@@ -53,7 +56,7 @@ classdef QuadCopter < handle
     end
 
     methods
-        function obj = QuadCopter(DynPar, Controller, InitCond, dt, SimTime)
+        function obj = QuadCopter(DynPar, Controller, InitCond, dt, SimTime, Trajectory)
 
             % Dynamical Properties
             obj.Mass = DynPar.Mass;
@@ -91,6 +94,7 @@ classdef QuadCopter < handle
             % Simulation Properties
             obj.dt = dt;
             obj.SimTime = SimTime;
+            obj.Traj = Trajectory;
 
             % Input Forces
             obj.T = obj.Mass * obj.g;
@@ -109,7 +113,9 @@ classdef QuadCopter < handle
 
             obj.CurrentTime = t;
 
-            obj.AttitudeControl();
+            RefSig = obj.Traj(t);
+
+            obj.AttitudeControl(RefSig);
             U = [obj.T
                 obj.Tau];
 
@@ -182,7 +188,8 @@ classdef QuadCopter < handle
 
 
         function Val = WrapAngle(obj, Angle)
-            Val = rem(Angle - pi, 2*pi) + pi + rand * obj.IMUNoiseVar;
+            % Val = rem(Angle - pi, 2*pi) + pi + rand * obj.IMUNoiseVar;
+            Val = Angle;
         end
     end
 
@@ -203,18 +210,13 @@ classdef QuadCopter < handle
         end
 
 
-        function AttitudeControl(obj)
+        function AttitudeControl(obj, refSig)
 
             % Reference Signal Structure:
             %       RefSig(1) ==> X
             %       RefSig(2) ==> Y
             %       RefSig(3) ==> Z
             %       RefSig(4) ==> Psi
-
-            refSig = [1
-                      1
-                      2.5
-                      pi];
 
             DesX   = refSig(1);
             DesY   = refSig(2);

@@ -21,6 +21,8 @@ classdef MotionPlotter < handle
         LinearMotionPlot
         AngularMotionPlot
         Viz3D
+
+        Path
     end
 
     methods
@@ -370,6 +372,10 @@ classdef MotionPlotter < handle
                            0, ...
                            'xk', 'LineWidth', 5);
 
+            obj.Path = animatedline('Color', [1 0 0], 'LineWidth' , 1);
+            obj.Path.LineStyle = ":";
+            obj.Path.addpoints(obj.Pos(1, 1), obj.Pos(1, 2), obj.Pos(1, 3));
+
             hold(gca, 'off');
 
             if Save
@@ -414,6 +420,8 @@ classdef MotionPlotter < handle
                     'XData', Center(1), ...
                     'YData', Center(2), ...
                     'ZData', 0);
+
+                obj.Path.addpoints(Center(1), Center(2), Center(3));
 
                 drawnow expose update
 

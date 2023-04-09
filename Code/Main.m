@@ -54,16 +54,19 @@ Gains.Angular.Sat  = [Inf, Inf, Inf];
 
 % Simulation Properties
 dt = 0.01;
-SimTime = 2;
+SimTime = 15;
+
+% Trajectory
+Traj = @(t) [cos(t); sin(t); 2.5; t];
 
 %% InitCond a QuadCopter Obj
-Q = QuadCopter(DynPar, Gains,InitCond, dt, SimTime);
+Q = QuadCopter(DynPar, Gains,InitCond, dt, SimTime, Traj);
 [Motion, InSig] = Q.Simulate();
 
 %% Plot Results
 Plt = MotionPlotter(Motion.t, Motion.Y, InSig.CtrlSig, InSig.Thrusts, DynPar.ArmLength);
 % Plt.PlotAngularMotion()
-% Plt.PlotLinearMotion()
+Plt.PlotLinearMotion()
 % Plt.PlotThrusts()
 % Plt.PlotControlSignals()
 
