@@ -1,6 +1,7 @@
 classdef MotionPlotter < handle
 
-    properties
+    % Internal Data Properties
+    properties (GetAccess = private)
         t
         Pos
         Vel
@@ -13,44 +14,49 @@ classdef MotionPlotter < handle
         ArmLen
     end
 
-    properties
+    % Plot Objects
+    properties (GetAccess = private, SetAccess = private)
         ThrustPlot
         CtrlSigPlot
         LinearMotionPlot
         AngularMotionPlot
         Viz3D
-        Viz3DAxis
     end
 
     methods
         function obj = MotionPlotter(t, Motion, CtrlSig, Thrusts, ArmLength)
-            obj.Pos = Motion(:, 1:3);
-            obj.Vel = Motion(:, 4:6);
+            % Unpack Motion to Pos, Vel, Orient and Ang Orient
+            obj.Pos    = Motion(:, 1:3);
+            obj.Vel    = Motion(:, 4:6);
             obj.Orient = Motion(:, 7:9);
-            obj.Omega = Motion(:, 10:12);
+            obj.Omega  = Motion(:, 10:12);
 
+            % Save Thrusts and Control Signals
             obj.Thrusts = Thrusts;
             obj.CtrlSig = CtrlSig;
 
-            obj.t = t;
+            obj.t = t;                          % Time Vector
 
-            obj.ArmLen = ArmLength;
+            obj.ArmLen = ArmLength;             % Quad Arm Length
         end
 
-        
+
         function PlotControlSignals(obj, Save)
 
-            if nargin == 1
+            if nargin == 1          % Set Default Arg
                 Save = false;
             end
 
+            % Create Plot Object
             obj.CtrlSigPlot = figure('Name', 'Control Signals Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.CtrlSigPlot.GraphicsSmoothing = 'on';
             obj.CtrlSigPlot.Color = [1, 1, 1];
 
+            % Set Super Title
             sgtitle("Control Signals", 'FontSize', 24,'FontWeight', 'Bold')
 
+            % Plot Signals
             subplot(4, 1, 1)
             plot(obj.t, obj.CtrlSig(1, :), "LineWidth", 2.5)
             ylabel("\SigmaThrust", 'FontSize', 10,'FontWeight', 'Bold')
@@ -79,11 +85,11 @@ classdef MotionPlotter < handle
             grid minor
             title("Moment Along Z Axis", 'FontSize', 14,'FontWeight', 'Bold')
 
+            % Make Directory and Save Plot if Save is Set
             if Save
-
                 mkdir Plots
-                
-                try 
+
+                try
                     rmdir Plots\CtrlSignals
                 catch
                 end
@@ -91,24 +97,26 @@ classdef MotionPlotter < handle
                 mkdir Plots\CtrlSignals
                 exportgraphics(obj.CtrlSigPlot, 'Plots/CtrlSignals/ControlSignals.jpg');
                 exportgraphics(obj.CtrlSigPlot, 'Plots/CtrlSignals/ControlSignals.pdf');
-
             end
         end
 
 
         function PlotThrusts(obj, Save)
 
-            if nargin == 1
+            if nargin == 1          % Set Default Arg
                 Save = false;
             end
 
+            % Create Plot Object
             obj.ThrustPlot = figure('Name', 'Motor Thrusts Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.ThrustPlot.GraphicsSmoothing = 'on';
             obj.ThrustPlot.Color = [1, 1, 1];
 
+            % Set Super Title
             sgtitle("Thrust Signals", 'FontSize', 24,'FontWeight', 'Bold')
 
+            % Plot Signals
             subplot(4, 1, 1)
             plot(obj.t, obj.Thrusts(1, :), "LineWidth", 2.5)
             ylabel("T_1 (kg)", 'FontSize', 10,'FontWeight', 'Bold')
@@ -137,10 +145,11 @@ classdef MotionPlotter < handle
             grid minor
             title("Motor 4", 'FontSize', 14,'FontWeight', 'Bold')
 
+            % Make Directory and Save Plot if Save is Set
             if Save
                 mkdir Plots
-                
-                try 
+
+                try
                     rmdir Plots\ThrustSignals
                 catch
                 end
@@ -148,24 +157,26 @@ classdef MotionPlotter < handle
                 mkdir Plots\ThrustSignals
                 exportgraphics(obj.ThrustPlot, 'Plots/ThrustSignals/ThrustSignalsSignals.jpg');
                 exportgraphics(obj.ThrustPlot, 'Plots/ThrustSignals/ThrustSignalsSignals.pdf');
-
             end
         end
 
 
         function PlotLinearMotion(obj, Save)
 
-            if nargin == 1
+            if nargin == 1          % Set Default Arg
                 Save = false;
             end
 
+            % Create Plot Object
             obj.LinearMotionPlot = figure('Name', 'Position and Velocity Motion Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.LinearMotionPlot.GraphicsSmoothing = 'on';
             obj.LinearMotionPlot.Color = [1, 1, 1];
 
+            % Set Super Title
             sgtitle("Linear Motion", 'FontSize', 24,'FontWeight', 'Bold')
 
+            % Position and Velocity
             subplot(2, 3, 1)
             plot(obj.t, obj.Pos(:, 1), "LineWidth", 2.5)
             ylabel("X (m)", 'FontSize', 10,'FontWeight', 'Bold')
@@ -208,10 +219,11 @@ classdef MotionPlotter < handle
             grid minor
             title("Velocity Along Z", 'FontSize', 14,'FontWeight', 'Bold')
 
+            % Make Directory and Save Plot if Save is Set
             if Save
                 mkdir Plots
-                
-                try 
+
+                try
                     rmdir Plots\LinearMotion
                 catch
                 end
@@ -219,24 +231,26 @@ classdef MotionPlotter < handle
                 mkdir Plots\LinearMotion
                 exportgraphics(obj.LinearMotionPlot, 'Plots/LinearMotion/LinearMotion.jpg');
                 exportgraphics(obj.LinearMotionPlot, 'Plots/LinearMotion/LinearMotion.pdf');
-
             end
         end
 
 
         function PlotAngularMotion(obj, Save)
 
-            if nargin == 1
+            if nargin == 1          % Set Default Arg
                 Save = false;
             end
 
+            % Create Plot Object
             obj.AngularMotionPlot = figure('Name', 'Orientation and Angular Velocity Motion Plots', ...
                 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.AngularMotionPlot.GraphicsSmoothing = 'on';
             obj.AngularMotionPlot.Color = [1, 1, 1];
 
+            % Set Super Title
             sgtitle("Angular Motion", 'FontSize', 24,'FontWeight', 'Bold')
 
+            % Roation Angle and Angular Velocities Plots
             subplot(2, 3, 1)
             plot(obj.t, obj.Orient(:, 1), "LineWidth", 2.5)
             ylabel("\phi (radians)", 'FontSize', 10,'FontWeight', 'Bold')
@@ -279,10 +293,11 @@ classdef MotionPlotter < handle
             grid minor
             title("Angular Velocity Along Z", 'FontSize', 14,'FontWeight', 'Bold')
 
+            % Make Directory and Save Plot if Save is Set
             if Save
                 mkdir Plots
-                
-                try 
+
+                try
                     rmdir Plots\AngularMotion
                 catch
                 end
@@ -290,78 +305,80 @@ classdef MotionPlotter < handle
                 mkdir Plots\AngularMotion
                 exportgraphics(obj.AngularMotionPlot, 'Plots/AngularMotion/AngularMotion.jpg');
                 exportgraphics(obj.AngularMotionPlot, 'Plots/AngularMotion/AngularMotion.pdf');
-
             end
         end
 
 
         function Plot3D(obj, Save)
 
-            if nargin == 1
+            if nargin == 1          % Set Default Arg
                 Save = false;
             end
 
+            % Create Plot Object
             obj.Viz3D = figure('Name', '3D Trajectory Plot', 'Units', 'normalized', 'OuterPosition', [0, 0, 1, 1]);
             obj.Viz3D.GraphicsSmoothing = 'on';
             obj.Viz3D.Color = [1, 1, 1];
 
-            obj.Viz3DAxis = gca;
-
             grid minor
             axis equal;
             title("3D Visualization of the Motion", 'FontSize', 16, 'FontWeight', 'Bold')
-            xlabel("X", 'FontSize', 14,'FontWeight', 'Bold')
-            ylabel("Y", 'FontSize', 14,'FontWeight', 'Bold')
-            zlabel("Z", 'FontSize', 14,'FontWeight', 'Bold')
-            % axis off
+            xlabel('X', 'FontSize', 14, 'FontWeight', 'Bold')
+            ylabel('Y', 'FontSize', 14, 'FontWeight', 'Bold')
+            zlabel('Z', 'FontSize', 14, 'FontWeight', 'Bold')
+
             view(3)
-            % view(90, 0)
-            % view(0, 0)
-%             view(0, 90)
+            %             view(90, 0)
+            %             view(0, 0)
+            %             view(0, 90)
 
             % Setting Limits to the Plot
-            RoomDims.X = [-5, 5];
-            RoomDims.Y = [-5, 5];
+            RoomDims.X = [-4, 4];
+            RoomDims.Y = [-4, 4];
             RoomDims.Z = [0, 5];
 
+            % Set Room Dimension Limitations
             xlim(RoomDims.X)
             ylim(RoomDims.Y)
             zlim(RoomDims.Z)
 
-
             % Initial MotorCoordinates
             MotorCoord = [obj.ArmLen,           0, 0
-                0,  obj.ArmLen, 0
-                -obj.ArmLen,           0, 0
-                0, -obj.ArmLen, 0];
-
+                                   0,  obj.ArmLen, 0
+                         -obj.ArmLen,           0, 0
+                                   0, -obj.ArmLen, 0]';
+     
             % Create Primary Plot Objects
             hold(gca, 'on');
-            ArmX = plot3(gca, MotorCoord([1, 3], 1) + obj.Pos(1, 1), ...
-                MotorCoord([1, 3], 2) + obj.Pos(1, 2), ...
-                MotorCoord([1, 3], 3) + obj.Pos(1, 3), ...
-                '-ro','MarkerSize', 5);
+            ArmX = plot3(gca, MotorCoord(1, [1, 3]) + obj.Pos(1, 1), ...
+                         MotorCoord(2, [1, 3]) + obj.Pos(1, 2), ...
+                         MotorCoord(3, [1, 3]) + obj.Pos(1, 3), ...
+                         '-ro', 'MarkerSize', 5, 'MarkerEdgeColor', [0, 0, 0], 'MarkerFaceColor', [0.5, 0.5, 0.5], 'LineWidth', 1.1);
 
-            ArmY = plot3(gca, MotorCoord([2, 4], 1) + obj.Pos(1, 1), ...
-                MotorCoord([2, 4], 2) + obj.Pos(1, 2), ...
-                MotorCoord([2, 4], 3) + obj.Pos(1, 3), ...
-                '-bo','MarkerSize', 5);
+            ArmY = plot3(gca, MotorCoord(1, [2, 4]) + obj.Pos(1, 1), ...
+                         MotorCoord(2, [2, 4]) + obj.Pos(1, 2), ...
+                         MotorCoord(3, [2, 4]) + obj.Pos(1, 3), ...
+                         '-bo', 'MarkerSize', 5, 'MarkerEdgeColor', [0, 0, 0], 'MarkerFaceColor', [0.5, 0.5, 0.5], 'LineWidth', 1.1);
 
             PayLoad = plot3(gca, obj.Pos(1, 1), ...
-                obj.Pos(1, 2), ...
-                obj.Pos(1, 3), ...
-                'ok', 'Linewidth', 3);
+                            obj.Pos(1, 2), ...
+                            obj.Pos(1, 3), ...
+                            'sk', 'Linewidth', 2, 'MarkerSize', 4);
 
             Shadow = plot3(gca, obj.Pos(1, 1), ...
-                obj.Pos(1, 2), ...
-                0, ...
-                'xk', 'LineWidth', 5);
+                           obj.Pos(1, 2), ...
+                           0, ...
+                           'xk', 'LineWidth', 5);
 
             hold(gca, 'off');
 
             if Save
-                myVideo = VideoWriter('myVideoFile.mp4', 'MPEG-4');
-                myVideo.FrameRate = 60;
+                % Create a FileName Based on Time
+                filename = ['Viz3D_', char(datetime('now', 'Format', 'hhmmss')), '.mp4'];
+                
+                % Create a Video Object and Configure it
+                myVideo = VideoWriter(filename, 'MPEG-4');
+                myVideo.FrameRate = round(numel(obj.t) / range(obj.t));
                 open(myVideo)
             end
 
@@ -372,24 +389,21 @@ classdef MotionPlotter < handle
 
                 % Extract Current Orientation and Position
                 Orientation = obj.Orient(i, 1:3);
-                Center      = obj.Pos(i, 1:3);
+                Center      = obj.Pos(i, 1:3)';
 
                 % Create a Temp Mat to Hold Rotated MotorCoords
-                tmp = zeros(size(MotorCoord));
+                tmp = RotationMatrix(Orientation) * MotorCoord + Center;
 
-                for j = 1:size(MotorCoord, 1)       % Rotate Points
-                    tmp(j, :) = RotatePoint(Orientation, MotorCoord(j, :), Center)';
-                end
-
+                % Update Newly Calculated Position Coordinates
                 set(ArmX, ...
-                    'XData', tmp([1, 3], 1), ...
-                    'YData', tmp([1, 3], 2), ...
-                    'ZData', tmp([1, 3], 3));
+                    'XData', tmp(1, [1, 3]), ...
+                    'YData', tmp(2, [1, 3]), ...
+                    'ZData', tmp(3, [1, 3]));
 
                 set(ArmY, ...
-                    'XData', tmp([2, 4], 1), ...
-                    'YData', tmp([2, 4], 2), ...
-                    'ZData', tmp([2, 4], 3));
+                    'XData', tmp(1, [2, 4]), ...
+                    'YData', tmp(2, [2, 4]), ...
+                    'ZData', tmp(3, [2, 4]));
 
                 set(PayLoad, ...
                     'XData', Center(1), ...
@@ -404,11 +418,12 @@ classdef MotionPlotter < handle
                 drawnow expose update
 
                 if Save
-                    frame = getframe(obj.Viz3D); %get frame
+                    % Get Frame from the Plot and Write to Video Object
+                    frame = getframe(obj.Viz3D);
                     writeVideo(myVideo, frame);
                 end
 
-                % Crash Detection
+                % Crash Detection And Message
                 if    Center(3) < RoomDims.Z(1) || Center(3) > RoomDims.Z(2) ...
                         || Center(2) < RoomDims.Y(1) || Center(2) > RoomDims.Y(2) ...
                         || Center(1) < RoomDims.X(1) || Center(1) > RoomDims.X(2)
@@ -423,36 +438,4 @@ classdef MotionPlotter < handle
             end
         end
     end
-end
-
-
-function NewPoint = RotatePoint(Orient, Point, OffSet)
-
-    if nargin == 2
-        OffSet = [0; 0; 0];
-    end
-
-    % Sanity Check
-    OffSet = reshape(OffSet, [3, 1]);
-    Point = reshape(Point, [3, 1]);
-
-
-    % Create the Rotation Matrix
-    Phi = Orient(1);
-    Theta = Orient(2);
-    Psi = Orient(3);
-
-    cPhi = cos(Phi);
-    sPhi = sin(Phi);
-    cThe = cos(Theta);
-    sThe = sin(Theta);
-    cPsi = cos(Psi);
-    sPsi = sin(Psi);
-
-    RotMat = [cThe * cPsi, sPhi * sThe * cPsi - cPhi * sPsi, cPhi * sThe * cPsi + sPhi * sPsi
-              cThe * sPsi, sPhi * sThe * sPsi + cPhi * cPsi, cPhi * sThe * sPsi - sPhi * cPsi
-                    -sThe,                      cThe * sPhi,                      cThe * cPhi];
-
-    % Rotate The Point
-    NewPoint = RotMat * Point + OffSet;
 end
