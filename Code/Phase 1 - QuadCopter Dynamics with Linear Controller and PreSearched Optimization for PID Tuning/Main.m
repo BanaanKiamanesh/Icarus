@@ -54,7 +54,7 @@ Gains.Angular.Sat  = [Inf, Inf, Inf];
 
 % Simulation Properties
 dt = 0.01;
-SimTime = 45;
+SimTime = 15;
 
 %% InitCond a QuadCopter Obj
 Q = QuadCopter(DynPar, Gains,InitCond, dt, SimTime, @Traj);

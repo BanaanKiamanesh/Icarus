@@ -27,23 +27,23 @@ function [J, Quad] = CostFunction(Sol, RoomDims)
     % SimTime = 30;
     %
     % Trajectory = @Traj;
-    %
-    % % Controller Gains and Params
-    % % X, Y, Z respectively
-    % Gains.Linear.Kp  = [    2,   0.8,  1.5] + Sol(1 : 3);
-    % Gains.Linear.Ki  = [    0,   0.1,    0] + Sol(4 : 6);
-    % Gains.Linear.Kd  = [    6,   7.5,    5] + Sol(7 : 9);
-    % Gains.Linear.Tau = [    1,     1, 0.01] + Sol(10:12);
-    %
-    % Gains.Linear.Sat  = [Inf, Inf, Inf];
-    %
-    % % Phi, Theta, Psi respectively
-    % Gains.Angular.Kp  = [ 0.1, 0.05,  0.2] + Sol(13:15);
-    % Gains.Angular.Ki  = [ 0.1, 0.05,    0] + Sol(16:18);
-    % Gains.Angular.Kd  = [ 0.1,  0.1,  0.2] + Sol(19:21);
-    % Gains.Angular.Tau = [0.01, 0.01, 0.01] + Sol(22:24);
-    %
-    % Gains.Angular.Sat  = [Inf, Inf, Inf];
+
+    % Controller Gains and Params
+    % X, Y, Z respectively
+    Gains.Linear.Kp  = [    2,   0.8,  1.5] + Sol(1 : 3);
+    Gains.Linear.Ki  = [    0,   0.1,    0] + Sol(4 : 6);
+    Gains.Linear.Kd  = [    6,   7.5,    5] + Sol(7 : 9);
+    Gains.Linear.Tau = [    1,     1, 0.01] + Sol(10:12);
+
+    Gains.Linear.Sat  = [Inf, Inf, Inf];
+
+    % Phi, Theta, Psi respectively
+    Gains.Angular.Kp  = [ 0.1, 0.05,  0.2] + Sol(13:15);
+    Gains.Angular.Ki  = [ 0.1, 0.05,    0] + Sol(16:18);
+    Gains.Angular.Kd  = [ 0.1,  0.1,  0.2] + Sol(19:21);
+    Gains.Angular.Tau = [0.01, 0.01, 0.01] + Sol(22:24);
+
+    Gains.Angular.Sat  = [Inf, Inf, Inf];
 
     Quad = QuadCopter(DynPar, Gains, InitCond, dt, SimTime, Trajectory);
 

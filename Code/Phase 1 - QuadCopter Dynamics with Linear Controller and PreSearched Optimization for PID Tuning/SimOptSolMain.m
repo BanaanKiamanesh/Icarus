@@ -4,7 +4,7 @@ clc
 warning off
 
 %% Load and Declare Parameters
-load OptData\OptimizationSol.mat
+load OptData\OptimizationSol4.mat
 
 Sol = Sol.SIV;
 
@@ -52,10 +52,10 @@ Quad = QuadCopter(DynPar, Gains, InitCond, dt, SimTime, Trajectory);
 
 %% Plot Results
 Plt = MotionPlotter(Motion.t, Motion.Y, InSig.U, InSig.Thrusts, InSig.Err, InSig.RefSig, Quad.ArmLength);
-Plt.PlotAngularMotion(true)
-Plt.PlotLinearMotion(true)
-Plt.PlotTrackingErr(true)
-Plt.PlotThrusts(true)
-Plt.PlotControlSignals(true)
+Plt.PlotAngularMotion()
+Plt.PlotLinearMotion()
+Plt.PlotTrackingErr()
+Plt.PlotThrusts()
+Plt.PlotControlSignals()
 
-Plt.Plot3D(true);
+Plt.Plot3D();
