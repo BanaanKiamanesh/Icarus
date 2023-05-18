@@ -392,7 +392,6 @@ classdef MotionPlotter < handle
         end
 
 
-
         function Plot3D(obj, Save)
 
             if nargin == 1          % Set Default Arg
@@ -473,7 +472,7 @@ classdef MotionPlotter < handle
 
             if Save
                 % Create a FileName Based on Time
-                filename = ['Video\Viz3D_', char(datetime('now', 'Format', 'hhmmss')), '.mp4'];
+                filename = ['Videos\Viz3D_', char(datetime('now', 'Format', 'hhmmss')), '.mp4'];
 
                 % Create a Video Object and Configure it
                 myVideo = VideoWriter(filename, 'MPEG-4');
@@ -483,6 +482,8 @@ classdef MotionPlotter < handle
 
             % Main Simulation Loop
             for i = 1:length(obj.Pos)
+
+                view(-50 + obj.t(i) * 3, 10 + 10 * sin(obj.t(i)/5))
 
                 subtitle(['Simulation Time: ', num2str(round(obj.t(i), 1))],'FontWeight', 'Bold')
 
@@ -517,8 +518,8 @@ classdef MotionPlotter < handle
                 obj.Path.addpoints(Center(1), Center(2), Center(3));
                 obj.Trajectory.addpoints(obj.RefSig(1, i), obj.RefSig(2, i), obj.RefSig(3, i));
 
-                drawnow expose update
-                % drawnow limitrate
+                % drawnow expose update
+                drawnow limitrate
 
                 if Save
                     % Get Frame from the Plot and Write to Video Object
