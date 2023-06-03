@@ -1,8 +1,14 @@
 ## Dynamics and Kinematics of a Quadcopter
 
+---
+
 A quadcopter is a type of unmanned aerial vehicle (UAV) that uses four rotors to generate lift and control its motion. The dynamics and kinematics of a quadcopter can be described using the principles of Newtonian mechanics and rigid body dynamics.
 
-### Kinematics
+### 1. Kinematics
+
+---
+
+![QuadCopter Principal Axes in + Configuration](Images\QuadFrames.jpeg)
 
 The relation between the angular velocity of the quadcopter and the roll, pitch, and yaw angles can be expressed using the following equation:
 
@@ -23,7 +29,9 @@ where:
 - $u$, $v$, and $w$ are the velocities of the quadcopter in the body frame
 - $R(\phi, \theta, \psi)$ is the ZYX rotation matrix corresponding to the roll, pitch, and yaw angles
 
-### Dynamics
+### 2. Dynamics
+
+---
 
 The motion of a quadcopter can be described using six degrees of freedom: three translational (surge, sway, heave) and three rotational (roll, pitch, yaw). The forces and moments acting on the quadcopter can be modeled using the following equations:
 
