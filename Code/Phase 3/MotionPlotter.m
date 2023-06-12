@@ -121,9 +121,9 @@ classdef MotionPlotter < handle
                 catch
                 end
                 
-                mkdir Plots\CtrlSignals
-                exportgraphics(obj.CtrlSigPlot, 'Plots/SlidingSurfaces/SlidingSurfaces.jpg');
-                exportgraphics(obj.CtrlSigPlot, 'Plots/SlidingSurfaces/SlidingSurfaces.pdf');
+                mkdir Plots\SlidingSurfaces
+                exportgraphics(obj.SlidingSurfacePlot, 'Plots/SlidingSurfaces/SlidingSurfaces.jpg');
+                exportgraphics(obj.SlidingSurfacePlot, 'Plots/SlidingSurfaces/SlidingSurfaces.pdf');
             end
         end
         
@@ -367,7 +367,7 @@ classdef MotionPlotter < handle
             subplot(2, 3, 3)
             hold(gca, 'on');
             plot(obj.t, obj.Orient(3, :), 'LineWidth', 2.5)
-            plot(obj.t, obj.RefSig(4, :), 'LineWidth', 2.5)
+            plot(obj.t, obj.RefSig(4, :), 'LineWidth', 2.5, 'LineStyle', '--')
             hold(gca, 'off');
             ylabel('\psi (radians)', 'FontSize', 10,'FontWeight', 'Bold')
             xlabel('t (s)', 'FontSize', 10,'FontWeight', 'Bold')
